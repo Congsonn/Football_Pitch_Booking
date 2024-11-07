@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+  <section>
+    <div class="p-8 bg-gray-50">
+      {% if form.payment_method.value == 'cash' %}
+        <div class="w-full p-8 font-medium bg-white rounded-md">Thanh toán thành công</div>
+      {% else %}
+        <div class="w-full p-8 bg-white rounded-md">Coming soon...</div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

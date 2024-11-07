@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags util_filters %}
+
+{% block content %}
+  <section id="bookings">
+    <div class="p-8 bg-gray-50">
+      <h1 class="mb-4 text-xl font-bold">Đơn của bạn</h1>
+
+      <div class="space-y-6">
+        {% for b in user_bookings %}
+          <div class="p-6 bg-white rounded-md">
+            <div class="flex flex-col gap-4 sm:flex-row">
+              <div class="w-full sm:max-w-52">
+                <img src="{{ b.pitch.image.url }}" alt="{{ b.pitch.name }}" class="rounded-md" />
+              </div>
+              <div class="flex flex-col justify-between w-full h-full">
+                <div class="leading-4">
+                  <div class="">
+                    <div class="text-xl font-bold">{{ b.pitch.name }}</div>
+                    <div class="mb-3 text-gray-400">{{ b.pitch.location|title }} - {{ b.pitch.get_size_display }}</div>
+                  </div>
+                  <div class="">
+                    <h2 class="mt-4 mb-2 text-sm font-medium text-gray-900">Bạn đã đặt</h2>
+                    <div class="flex flex-wrap gap-2">
+                      <div class="p-1 font-semibold text-white truncate border rounded-md bg-primary-700">{{ b.get_datetime_booking }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col justify-end sm:w-1/2">
+                <div class="flex justify-end">
+                  {# prettier-ignore #}
+                  <a 
+                    href="{% url 'booking' b.uuid %}" 
+                    class="text-gray-900 truncate w-fit bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                    Chi tiết đơn
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

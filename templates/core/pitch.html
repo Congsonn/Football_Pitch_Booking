@@ -1,0 +1,41 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags util_filters %}
+
+{% block content %}
+  <section id="filter">
+    <div class="p-8 bg-gray-50">
+      <h2 class="mb-4 font-medium">Tìm kiếm sân</h2>
+      <div class="flex items-center p-4 bg-white rounded-md">
+        {% crispy form %}
+      </div>
+    </div>
+  </section>
+
+  <section id="pitches">
+    <div class="p-8 pt-0 bg-gray-50">
+      <h2 class="mb-4 font-medium">Danh sách sân</h2>
+
+      <div class="space-y-4">
+        {% for p in pitches %}
+          <div class="w-full p-8 bg-white rounded-md">
+            <div class="flex flex-col gap-4 sm:flex-row">
+              <div class="w-full sm:max-w-52">
+                <img src="{{ p.image.url }}" alt="{{ p.name }}" class="rounded-md" />
+              </div>
+              <div class="flex flex-col justify-between w-full">
+                <div class="leading-4">
+                  <div class="text-xl font-bold">{{ p.name }}</div>
+                  <div class="mb-3 text-gray-400">{{ p.location|title }} - {{ p.get_size_display }}</div>
+                  <div class="text-2xl font-bold text-primary-600">{{ p.price_per_hour|int_comma }} đ/giờ</div>
+                </div>
+                <div class="flex justify-end gap-4 mt-4">
+                  <a href="{% url 'pitch' p.uuid %}" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Chi tiết</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags util_filters %}
+
+{% block content %}
+  <section id="pitch">
+    <div class="p-8 pt-0 bg-gray-50">
+      <div class="flex flex-wrap gap-8 lg:flex-nowrap">
+        <div class="w-full lg:w-[60%] p-8 bg-white rounded-md">
+          <div class="flex flex-col h-full gap-4 sm:flex-row lg:flex-col">
+            <div class="w-full sm:max-w-96 lg:max-w-full lg:w-full">
+              <img src="{{ booking.pitch.image.url }}" alt="{{ booking.pitch.name }}" class="rounded-md" />
+            </div>
+            <div class="flex flex-col justify-between w-full h-full">
+              <div class="leading-4">
+                <div class="">
+                  <div class="text-xl font-bold">{{ booking.pitch.name }}</div>
+                  <div class="mb-3 text-gray-400">{{ booking.pitch.location|title }} - {{ booking.pitch.get_size_display }}</div>
+                  <div class="text-2xl font-bold text-primary-500">{{ booking.pitch.price_per_hour|int_comma }} đ/giờ</div>
+                </div>
+                <div class="">
+                  <h2 class="mt-4 mb-2 text-sm font-medium text-gray-900">Bạn đã đặt</h2>
+                  <div class="flex flex-wrap gap-2">
+                    <div class="p-1 font-semibold text-white border rounded-md bg-primary-700">{{ booking.get_datetime_booking }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex justify-end gap-4 mt-4">
+                {# prettier-ignore #}
+                <a 
+                  href="{% url 'pitch' booking.pitch.uuid %}" 
+                  class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                  Chi tiết sân
+                </a>
+
+                {# prettier-ignore #}
+                <button 
+                  hx-on:click="openModal('update-booking-pitch-modal');" 
+                  type="button" 
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-1.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                  Thay đổi
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col w-full gap-8 lg:flex-col sm:flex-row">
+          <div class="p-8 bg-white rounded-md w-full sm:w-[80%] lg:w-full h-fit">
+            <h2 class="mb-4 text-xl font-bold">Chi tiết đơn</h2>
+
+            <div class="space-y-1">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-medium">Đơn giá</p>
+                <p class="font-bold">
+                  {{ booking.pitch.price_per_hour|int_comma }} <span class="text-sm font-normal text-gray-400">đ/giờ</span>
+                </p>
+              </div>
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-medium">Tổng giờ đặt</p>
+                <p class="font-bold">
+                  {{ booking.get_total_booking_hours }} <span class="text-sm font-normal text-gray-400">giờ</span>
+                </p>
+              </div>
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-medium">Thành tiền</p>
+                <p class="text-2xl font-bold text-primary-600">
+                  {{ booking.get_total_amount|int_comma }} <span class="text-xl font-normal text-gray-400">đ</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          {% if not booking.status == 'paid' %}
+            <div class="w-full p-8 bg-white rounded-md">
+              <h2 class="mb-4 text-xl font-bold">Thanh toán đơn</h2>
+
+              <div>
+                {% crispy create_payment_form %}
+              </div>
+            </div>
+          {% else %}
+            <div class="w-full p-8 bg-white rounded-md h-fit">
+              <h2 class="text-xl font-bold text-primary-600">Đã thanh toán</h2>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="update-booking-pitch-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative w-full max-w-2xl max-h-full p-4">
+      <!-- Modal content -->
+      <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between p-4 border-b rounded-t md:p-5 dark:border-gray-600">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Đặt sân</h3>
+          <button hx-on:click="closeModal('update-booking-pitch-modal');" type="button" class="inline-flex items-center justify-center w-8 h-8 text-sm text-gray-400 bg-transparent rounded-lg hover:bg-gray-200 hover:text-gray-900 ms-auto dark:hover:bg-gray-600 dark:hover:text-white">
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+            </svg>
+            <span class="sr-only">Close modal</span>
+          </button>
+        </div>
+        <!-- Modal body -->
+        <div id="update-booking-pitch-modal-body" class="">
+          {% crispy form %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirm-delete-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative w-full max-w-md max-h-full p-4">
+      <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+        <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" hx-on:click="closeModal('confirm-delete-modal');">
+          <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+        <div class="p-4 text-center md:p-5">
+          <svg class="w-12 h-12 mx-auto mb-4 text-red-600 dark:text-red-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+          <h3 id="question-label" class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Bạn có chắc chắc muốn xóa tài khoản này?</h3>
+          <button id="btn-confirm" hx-on:click="closeModal('confirm-delete-modal');" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-4 py-1.5 text-center">Đúng, tôi chắc chắn</button>
+          <button hx-on:click="closeModal('confirm-delete-modal');" type="button" class="py-1.5 px-4 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Hủy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
